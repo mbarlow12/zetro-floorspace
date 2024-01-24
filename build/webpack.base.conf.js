@@ -2,6 +2,7 @@ var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
 var projectRoot = path.resolve(__dirname, '../')
+var webpack = require('webpack')
 
 var env = process.env.NODE_ENV
 // check env & config/index.js to decide whether to enable CSS source maps for the
@@ -31,23 +32,31 @@ module.exports = {
     }
   },
   resolveLoader: {
-    fallback: [path.join(__dirname, '../node_modules')]
+    modules: [path.join(__dirname, '../node_modules')]
   },
   module: {
     rules: [
       {
         test: /\.vue$/,
-        use: ['vue-loader']
+        loader: 'vue-loader',
+        options: {
+          loaders: utils.cssLoaders({ sourceMap: useCssSourceMap }),
+          postcss: [
+            require('autoprefixer')({
+              browsers: ['last 2 versions']
+            })
+          ]
+        }
       },
       {
         test: /\.js$/,
-        use: ['babel-loader'],
-        include: [projectRoot, path.resolve(projectRoot, 'node_modules/vue-virtual-scroller')],
+        loader: 'babel-loader',
+        include: [projectRoot],
         exclude: /node_modules/
       },
       {
         test: /\.(png|jpe?g|gif)(\?.*)?$/,
-        use: ['url-loader'],
+        loader: 'url-loader',
         query: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
@@ -56,11 +65,11 @@ module.exports = {
 
       {
        test: /\.svg$/,
-       use: ['vue-svg-loader']
+       loader: 'vue-svg-loader'
      },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: ['url-loader'],
+        loader: 'url-loader',
         query: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
@@ -71,17 +80,9 @@ module.exports = {
         /node_modules\/openlayers\/dist\/ol.js/
     ],
   },
-  eslint: {
-    formatter: require('eslint-friendly-formatter')
-  },
-  vue: {
-    loaders: utils.cssLoaders({ sourceMap: useCssSourceMap }),
-    postcss: [
-      require('autoprefixer')({
-        browsers: ['last 2 versions']
-      })
-    ]
-  },
+  // eslint: {
+  //   formatter: require('eslint-friendly-formatter')
+  // },
   externals: [{
     xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
   }],
