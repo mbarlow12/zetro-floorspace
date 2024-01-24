@@ -21,8 +21,8 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['', '.js', '.vue', '.json'],
-    fallback: [path.join(__dirname, '../node_modules')],
+    extensions: ['.js', '.vue', '.json'],
+    modules: [path.join(__dirname, '../node_modules')],
     alias: {
       'vue$': 'vue/dist/vue.common.js',
       'src': path.resolve(__dirname, '../src'),
@@ -35,7 +35,7 @@ module.exports = {
   },
   module: {
     preLoaders: [],
-    loaders: [
+    rules: [
       {
         test: /\.vue$/,
         loader: 'vue'
@@ -43,7 +43,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel',
-        include: projectRoot,
+        include: [projectRoot, path.resolve(projectRoot, 'node_modules/vue-virtual-scroller')],
         exclude: /node_modules/
       },
       {
