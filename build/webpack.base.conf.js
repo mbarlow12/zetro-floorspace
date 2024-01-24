@@ -34,25 +34,20 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')]
   },
   module: {
-    preLoaders: [],
     rules: [
       {
         test: /\.vue$/,
-        loader: 'vue'
+        use: ['vue-loader']
       },
       {
         test: /\.js$/,
-        loader: 'babel',
+        use: ['babel-loader'],
         include: [projectRoot, path.resolve(projectRoot, 'node_modules/vue-virtual-scroller')],
         exclude: /node_modules/
       },
       {
-        test: /\.json$/,
-        loader: 'json'
-      },
-      {
         test: /\.(png|jpe?g|gif)(\?.*)?$/,
-        loader: 'url',
+        use: ['url-loader'],
         query: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
@@ -61,11 +56,11 @@ module.exports = {
 
       {
        test: /\.svg$/,
-       loader: 'vue-svg-loader'
+       use: ['vue-svg-loader']
      },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url',
+        use: ['url-loader'],
         query: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
