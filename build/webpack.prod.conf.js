@@ -33,6 +33,18 @@ var webpackConfig = merge(baseWebpackConfig, {
     // new webpack.optimize.UglifyJsPlugin({
     //   sourceMap: true
     // }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      options: {
+        context: projectRoot,
+        vue: {
+            loaders: utils.cssLoaders({
+              sourceMap: config.build.productionSourceMap,
+              extract: true
+            })
+          },
+      }
+    }),
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css')
