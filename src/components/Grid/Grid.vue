@@ -25,7 +25,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 <script>
 import { mapState, mapGetters } from 'vuex';
 import { debounce } from '../../utilities';
-import d3AwareThrottle from '../../utilities/d3-aware-throttle';
 import methods from './methods';
 import geometryHelpers, { pointDistanceToSegment } from './../../store/modules/geometry/helpers';
 import modelHelpers from './../../store/modules/models/helpers';
@@ -33,6 +32,7 @@ import applicationHelpers from './../../store/modules/application/helpers';
 import { ResizeEvents } from '../../components/Resize';
 import drawMethods from './drawing';
 import { expandWindowAlongEdge, windowLocation } from './snapping';
+import _ from 'lodash';
 
 const d3 = require('d3');
 
@@ -75,7 +75,7 @@ export default {
   },
   mounted() {
     // throttle/debounce event handlers
-    this.handleMouseMove = d3AwareThrottle(this.highlightSnapTarget, 100);
+    this.handleMouseMove = _.throttle(this.highlightSnapTarget, 100);
 
     // render grid first time (not debounced, as this seems to fix an issue
     // where the x bounds are set correctly, and then becomes incorrect when the
