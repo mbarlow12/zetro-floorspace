@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>import_floorplan</name>
   <uid>79d7fbb8-e001-4c65-9444-c7dcb975290f</uid>
-  <version_id>98112ebb-2a55-40db-ad17-f272e07cd0d2</version_id>
-  <version_modified>20170614T033256Z</version_modified>
+  <version_id>22e82361-56c2-4edd-b094-6286959779ae</version_id>
+  <version_modified>20171211T232622Z</version_modified>
   <xml_checksum>0AD1E2E2</xml_checksum>
   <class_name>ImportFloorplan</class_name>
   <display_name>Import Floorplan</display_name>
-  <description>Imports a floorplan JSON file written by the OpenStudio Geometry Editor.</description>
+  <description>Imports a floorplan JSON file written by FloorspaceJS.</description>
   <modeler_description>Currently this measure deletes the existing geometry and replaces it.  In the future, a more advanced merge technique will be employed.</modeler_description>
   <arguments>
     <argument>
@@ -73,7 +73,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B2595976</checksum>
+      <checksum>5451C3B2</checksum>
     </file>
   </files>
 </measure>

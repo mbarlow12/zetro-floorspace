@@ -1,11 +1,7 @@
 @import "./../config";
 
 main {
-     #images .konvajs-content {
-        z-index: 1;
-    }
-
-    #images, #map-container {
+    #map-container {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -13,19 +9,19 @@ main {
 }
 
 #toolbar {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 5rem;
+    // height: 5rem;
 }
 
 #layout-main {
-    position: fixed;
+    position: absolute;
     top: 5rem;
     left: 0;
     right: 0;
-    bottom: 30%;
+    bottom: 0;
 
     > * {
         position: absolute;
@@ -35,19 +31,37 @@ main {
 
     #layout-navigation {
         left: 0;
-        width: 17.5rem;
+        width: 21.5rem;
+        z-index: 3;
     }
 
     main {
-        left: 17.5rem;
+        left: 21.5rem;
         right: 0;
+        #grid {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+        }
+    }
+    &.nav-on-top {
+      #layout-navigation {
+        bottom: 50%;
+        width: 100%;
+
+        .editable-table table tbody {
+          height: calc(50vh - 170px);
+        }
+      }
+      main {
+        left: 0;
+        top: 50%;
+      }
+
     }
 }
-
 #layout-library {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 70%;
+  height: 100%;
 }

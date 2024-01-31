@@ -1,9 +1,8 @@
-<!-- OpenStudio(R), Copyright (c) 2008-2016, Alliance for Sustainable Energy, LLC. All rights reserved.
+<!-- Floorspace.js, Copyright (c) 2016-2017, Alliance for Sustainable Energy, LLC. All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 (1) Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 (2) Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 (3) Neither the name of the copyright holder nor the names of any contributors may be used to endorse or promote products derived from this software without specific prior written permission from the respective party.
-(4) Other than as required in clauses (1) and (2), distributions in any form of modifications or other derivative works may not use the "OpenStudio" trademark, "OS", "os", or any other confusingly similar designation without specific prior written permission from Alliance for Sustainable Energy, LLC.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER, THE UNITED STATES GOVERNMENT, OR ANY CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
 <template>
@@ -14,10 +13,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             <span class="input-text">
                 <input ref="addressSearch" type="text" placeholder="Search for a location"/>
             </span>
-            <button @click="finishSetup">Done</button>
         </div>
         <div v-show="tool === 'Map'" id="help-text">
             <p>Drag the map and/or search to set desired location.  Use alt+shift to rotate the north axis. Click 'Done' when finished.</p>
+            <button @click="finishSetup">Done</button>
         </div>
 
         <map-modal v-if="mapModalVisible && !mapInitialized" @close="mapModalVisible = false; showReticle()"></map-modal>
@@ -36,13 +35,14 @@ const ol = require('openlayers');
 const d3 = require('d3');
 
 export default {
-  name: 'map',
+  name: 'map-view',
   data() {
     return {
       view: null,
       map: null,
+      startResolution: null,
       autocomplete: null,
-      mapModalVisible: true,
+      mapModalVisible: window.api ? window.api.config.showMapDialogOnStart : true,
       showGrid: false,
     };
   },
@@ -55,17 +55,23 @@ export default {
 
     this.initAutoComplete();
     this.loadMap();
-    ResizeEvents.$on('resize-resize', this.map.updateSize);
+    ResizeEvents.$on('resize', this.updateMapView);
+    window.eventBus.$on('boundsResolved', this.clearStartResolution);
   },
 
   /*
   * remove listener for view resizing
   */
   beforeDestroy() {
-    ResizeEvents.$off('resize-resize', this.map.updateSize);
+    ResizeEvents.$off('resize', this.updateMapView);
+    window.eventBus.$off('boundsResolved', this.clearStartResolution);
   },
 
   methods: {
+    clearStartResolution() {
+      this.startResolution = null;
+      this.updateMapView();
+    },
     /*
     * Asynchronously load google maps autocomplete
     * attatch to address search field
@@ -79,9 +85,9 @@ export default {
           // check that the selected place has associated lat/log data
           const place = autocomplete.getPlace();
           if (place.geometry) {
-            // changing component lat/long will trigger updateMapView, placing the map at the updated location
             this.latitude = place.geometry.location.lat();
             this.longitude = place.geometry.location.lng();
+            this.updateMapView();
           }
         });
       });
@@ -91,6 +97,7 @@ export default {
     * empty the map element and (re)load openlayers map canvas inside of it
     */
     loadMap() {
+      window.ol = ol;
       this.$refs.map.innerHTML = '';
       this.view = new ol.View();
       this.map = new ol.Map({
@@ -98,42 +105,35 @@ export default {
         target: 'map',
         view: this.view,
       });
+      this.view.on('propertychange', (e) => {
+        if (e.key === 'rotation') {
+          this.rotation = this.view.getRotation();
+        }
+      });
 
       this.updateMapView();
+      // this.view.getCenter() is not always available at first render.
+      // this seems to fix some problems with scale *shrug*
+      _.defer(() => this.updateMapView());
     },
 
     /*
     * position the map
     */
     updateMapView() {
-      // center of grid in RWU
-      let gridCenterX = (this.min_x + this.max_x) / 2;
-      let gridCenterY = (this.min_y + this.max_y) / 2;
-
-      // default map resolution RWU/px
-      let resolution = (this.max_x - this.min_x) / this.$refs.map.clientWidth;
-
-      // translate units from ft to meters
-      if (this.units === 'ft') {
-        // meters in a foot
-        const mPerFt = ol.proj.METERS_PER_UNIT['us-ft'];
-        resolution *= mPerFt;
-        gridCenterX *= mPerFt;
-        gridCenterY *= mPerFt;
-      }
+      console.log('updateMapView');
+      this.map.updateSize();
 
       // current long/lat map position in meters
       const mapCenter = ol.proj.fromLonLat([this.longitude, this.latitude]);
 
-      // openlayers places the center in the bottom left of the screen, so add the grid center (m) to the openlayers center
-      // adjust for rotation
-      // subtract the vertical grid center from the y adjustment because the y axis is inverted
-      let deltaY = ((gridCenterX * Math.cos(this.rotation)) - (gridCenterY * Math.sin(this.rotation)));
-      let deltaX = ((gridCenterY * Math.cos(this.rotation)) + (gridCenterX * Math.sin(this.rotation)));
-
+      let resolution = this.unAdjustedResolution;
+      let deltaY = this.unAdjustedDelta.y;
+      let deltaX = this.unAdjustedDelta.x;
       // Web Mercator projections use different resolutions at different latitudes
       // if the map has been placed, adjust the values for the current latitude
       if (this.view.getCenter()) {
+        this.startResolution = this.startResolution || ol.proj.getPointResolution(this.view.getProjection(), this.view.getResolution(), this.view.getCenter());
         const resolutionAdjustment = 1 / ol.proj.getPointResolution(this.view.getProjection(), 1, this.view.getCenter());
 
         resolution *= resolutionAdjustment;
@@ -148,7 +148,6 @@ export default {
       this.view.setResolution(resolution);
       this.view.setCenter(mapCenter);
       this.view.setRotation(this.rotation);
-
     },
 
     /*
@@ -159,9 +158,15 @@ export default {
       this.longitude = center[0];
       this.latitude = center[1];
 
+      const resolution = ol.proj.getPointResolution(this.view.getProjection(), this.view.getResolution(), this.view.getCenter());
+      const scale = this.startResolution / resolution;
+      console.log(`scaling to ${this.startResolution} / ${resolution} == ${scale}`);
+      window.eventBus.$emit('scaleTo', scale);
+
       this.rotation = this.view.getRotation();
 
       this.$store.dispatch('project/setMapInitialized', { initialized: true });
+
       this.tool = 'Rectangle';
 
       // remove reticle
@@ -206,13 +211,40 @@ export default {
       units: state => state.project.config.units,
       mapInitialized: state => state.project.map.initialized,
     }),
+    mPerFt() { return ol.proj.METERS_PER_UNIT['us-ft']; },
+    unAdjustedResolutionMeters() {
+      // default map resolution RWU/px
+      return (this.max_x - this.min_x) / this.$refs.map.clientWidth;
+    },
+    unAdjustedResolution() {
+      return this.units === 'ip' ? this.mPerFt * this.unAdjustedResolutionMeters : this.unAdjustedResolutionMeters;
+    },
+    gridCenterMeters() {
+      // center of grid in RWU
+      return {
+        x: (this.min_x + this.max_x) / 2,
+        y: (this.min_y + this.max_y) / 2,
+      };
+    },
+    gridCenter() {
+      return this.units === 'ip' ? _.mapValues(this.gridCenterMeters, v => v * this.mPerFt) : this.gridCenterMeters;
+    },
+    unAdjustedDelta() {
+      // openlayers places the center in the bottom left of the screen, so add the grid center (m) to the openlayers center
+      // adjust for rotation
+      // subtract the vertical grid center from the y adjustment because the y axis is inverted
+      const deltaY = ((this.gridCenter.x * Math.cos(this.rotation)) - (this.gridCenter.y * Math.sin(this.rotation)));
+      const deltaX = ((this.gridCenter.y * Math.cos(this.rotation)) + (this.gridCenter.x * Math.sin(this.rotation)));
+      return { x: deltaX, y: deltaY };
+    },
+
     gridVisible: {
       get() { return this.$store.state.project.grid.visible; },
       set(val) { this.$store.dispatch('project/setGridVisible', { visible: val }); },
     },
     tool: {
       get() { return this.$store.state.application.currentSelections.tool; },
-      set(val) { this.$store.dispatch('application/setApplicationTool', { tool: val }); },
+      set(val) { this.$store.dispatch('application/setCurrentTool', { tool: val }); },
     },
     latitude: {
       get() { return this.$store.state.project.map.latitude; },
@@ -228,9 +260,7 @@ export default {
     },
   },
   watch: {
-    latitude() { this.updateMapView(); },
-    longitude() { this.updateMapView(); },
-    rotation() { this.updateMapView(); },
+    units() { this.updateMapView(); },
     projectView: {
       handler() { this.updateMapView(); },
       deep: true,
@@ -267,8 +297,13 @@ export default {
         margin-right: 10px;
     }
 
-    input:focus {
-        outline: none;
+    input {
+      &:focus {
+          outline: none;
+      }
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      font-size: medium;
     }
 }
 
@@ -285,8 +320,15 @@ export default {
         background: white;
         padding: 2px 4px;
         margin: 10px;
+        width: calc(100% - 110px);
         border: 2px solid $gray-darkest;
         display: inline-block;
+        // float: left;
+    }
+
+    button {
+      display: inline-block;
+      margin: 10px;
     }
 }
 

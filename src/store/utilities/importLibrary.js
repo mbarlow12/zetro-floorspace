@@ -1,10 +1,16 @@
-import idFactory from './generateId'
+import _ from 'lodash';
+import idFactory from './generateId';
+import { libraryTypes } from '../modules/application/appconfig';
+import { convertLibrary } from './unitConversion';
 
 export default function importLibrary(context, payload) {
   let count = 0;
-  const types = Object.keys(payload.data);
-  types.forEach((type) => {
-    if (type === 'project') { return; }
+  libraryTypes.forEach((type) => {
+    if (!payload.data[type] || !payload.data[type].length) {
+      // library was created before this type existed, or
+      // has no entries of this type.
+      return;
+    }
     const existingNames = context.state.models.library[type].map((o) => {
       // /_\d+[\w\s]?$/
       // if object name contains duplicate suffix, remove suffix
@@ -24,15 +30,29 @@ export default function importLibrary(context, payload) {
     });
   });
 
+  const projectSystem = context.state.project.config.units;
+  const librarySystemRaw = _.get(payload, 'data.project.config.units');
+  let librarySystem = (
+        librarySystemRaw === 'ft' ? 'ip' :
+        librarySystemRaw === 'm' ? 'si' :
+        librarySystemRaw);
+
+  if (librarySystem !== 'ip' && librarySystem !== 'si') {
+    console.warn(`Expected data.project.config.units to be "ip" or "si", received "${librarySystemRaw}"`);
+    console.warn('unable to determine units of library -- using project units');
+    librarySystem = projectSystem;
+  }
+  const localUnitsPayload = convertLibrary(payload.data, librarySystem, projectSystem);
 
   window.eventBus.$emit('success', `Imported ${count} object${count !== 1 ? 's' : ''}`);
   // merge the import data with the existing library objects
-  context.commit('importLibrary', {
-    building_units: context.state.models.library.building_units.concat(payload.data.building_units || []),
-    thermal_zones: context.state.models.library.thermal_zones.concat(payload.data.thermal_zones || []),
-    space_types: context.state.models.library.space_types.concat(payload.data.space_types || []),
-    construction_sets: context.state.models.library.construction_sets.concat(payload.data.construction_sets || []),
-    windows: context.state.models.library.windows.concat(payload.data.windows || []),
-    daylighting_controls: context.state.models.library.daylighting_controls.concat(payload.data.daylighting_controls || []),
-  });
+  context.commit(
+    'importLibrary',
+    _.fromPairs([
+      'building_units', 'thermal_zones', 'space_types', 'construction_sets', 'door_definitions',
+      'window_definitions', 'daylighting_control_definitions', 'pitched_roofs',
+    ].map(k => (
+      [k, context.state.models.library[k].concat(localUnitsPayload[k] || [])]
+    ))),
+  );
 }

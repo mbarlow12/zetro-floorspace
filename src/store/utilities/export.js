@@ -1,33 +1,85 @@
-export default function exportData (state, getters) {
+import _ from 'lodash';
+import version from '../../version';
+import { repeatingWindowCenters } from '../../store/modules/geometry/helpers';
 
-    var exportObject = {
-        application: state.application,
-        project: state.project,
-        stories: state.models.stories,
-        ...state.models.library
-    };
-    const geometrySets = getters['geometry/exportData']
-    exportObject = JSON.parse(JSON.stringify(exportObject));
-    exportObject.stories.forEach((story) => {
-        story.geometry = geometrySets.find((geometry) => { return geometry.id === story.geometry_id; });
-        delete story.geometry_id;
-    });
-    formatObject(exportObject);
-    return exportObject;
+function formatHex(val) {
+  if (!val) { return null; }
+  if (val.length === 4) {
+    return `#${val[1]}${val[1]}${val[2]}${val[2]}${val[3]}${val[3]}`;
+  }
+  return val;
 }
 
 function formatObject(obj) {
-    for (var key in obj) {
-        // coerce all numeric ids to strings
-        if ((key === "id" || ~key.indexOf("_id")) && typeof obj[key] === "number") {
-            obj[key] = String(obj[key]);
-        }
-        if (~key.indexOf("_ids") && typeof obj[key] === "object") {
-            obj[key] = obj[key].map(id => String(id));
-        }
-        // recurse
-        if (obj[key] !== null && typeof obj[key] === "object") {
-            formatObject(obj[key]);
-        }
+  if (_.isArray(obj)) {
+    return obj.map(formatObject);
+  } else if (_.isObject(obj)) {
+    return _.mapValues(obj, (val, key) => {
+      if ((key === 'id' || key.indexOf('_id') >= 0) && _.isNumber(val)) {
+        return String(val);
+      }
+      if (key === 'color') {
+        return formatHex(val);
+      }
+      return formatObject(val);
+    });
+  }
+  return obj;
+}
+
+function mungeWindows(windows, geometry, windowDefs) {
+  const repeatingWindowDefs = _.chain(windowDefs)
+    .filter({ window_definition_mode: 'Repeating Windows' })
+    .map(wd => [wd.id, wd])
+    .fromPairs()
+    .value();
+
+  return windows.map((w) => {
+    const def = repeatingWindowDefs[w.window_definition_id];
+    if (def) {
+      const edge = _.find(geometry.edges, { id: w.edge_id });
+      const centers = repeatingWindowCenters({
+        start: _.find(geometry.vertices, { id: edge.vertex_ids[0] }),
+        end: _.find(geometry.vertices, { id: edge.vertex_ids[1] }),
+        spacing: def.window_spacing,
+        width: def.width,
+      });
+      return {
+        ...w,
+        alpha: _.map(centers, 'alpha'),
+      };
     }
+    return w;
+  });
+}
+
+
+function mungeStories(stories, geometries, windowDefs) {
+  return stories.map((story) => {
+    const geometry = JSON.parse(JSON.stringify(
+      _.find(geometries, { id: story.geometry_id }) || { edges: [], vertices: [], faces: [] },
+    ));
+    return {
+      ...story,
+      spaces: story.spaces,
+      geometry,
+      windows: mungeWindows(story.windows, geometry, windowDefs),
+      geometry_id: undefined,
+    };
+  });
+}
+
+export default function exportData(state, getters) {
+  const exportObject = {
+    application: state.application,
+    project: state.project,
+    stories: mungeStories(
+      state.models.stories,
+      getters['geometry/exportData'],
+      state.models.library.window_definitions,
+    ),
+    ...state.models.library,
+    version,
+  };
+  return formatObject(exportObject);
 }

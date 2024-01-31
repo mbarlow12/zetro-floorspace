@@ -1,142 +1,92 @@
-<!-- OpenStudio(R), Copyright (c) 2008-2016, Alliance for Sustainable Energy, LLC. All rights reserved.
+<!-- Floorspace.js, Copyright (c) 2016-2017, Alliance for Sustainable Energy, LLC. All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 (1) Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 (2) Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 (3) Neither the name of the copyright holder nor the names of any contributors may be used to endorse or promote products derived from this software without specific prior written permission from the respective party.
-(4) Other than as required in clauses (1) and (2), distributions in any form of modifications or other derivative works may not use the 'OpenStudio' trademark, 'OS', 'os', or any other confusingly similar designation without specific prior written permission from Alliance for Sustainable Energy, LLC.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER, THE UNITED STATES GOVERNMENT, OR ANY CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
 <template>
-<section id='library'>
-    <header>
-        <div class="input-text">
-            <label>Search</label>
-            <input v-model="search">
-        </div>
-        <div class='input-select'>
-            <label>Type</label>
-            <select v-model='type'>
-                <option v-for='(objects, type) in extendedLibrary' :value="type">{{ displayTypeForType(type) }}</option>
-            </select>
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 14' height='10px'>
-                <path d='M.5 0v14l11-7-11-7z' transform='translate(13) rotate(90)'></path>
-            </svg>
-        </div>
-        <button @click="createItem">New</button>
-    </header>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th v-for="column in columns" @click="sortBy(column)">
-                    <span>
-                        <span>{{ displayNameForKey(column) }}</span>
-                        <svg v-show="column === sortKey && sortDescending" viewBox="0 0 10 3" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0 .5l5 5 5-5H0z"/>
-                        </svg>
-                        <svg v-show="column === sortKey && !sortDescending" viewBox="0 0 10 3" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0 5.5l5-5 5 5H0z"/>
-                        </svg>
-                    </span>
-                </th>
-                <th class="destroy"></th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr v-for='object in displayObjects' :key="object.id" @click="selectedObject = object" :style="{ 'background-color': (selectedObject && selectedObject.id === object.id) ? '#008500' : '' }"><!-- :class="{ current: selectedObject.id === object.id }" -->
-                <td v-for="column in columns" @mouseover="toggleError(object, column, true)" @mouseout="toggleError(object, column, false)">
-                    <div v-if="errorForObjectAndKey(object, column) && errorForObjectAndKey(object, column).visible " class="tooltip-error">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 14">
-                            <path d="M.5 0v14l11-7-11-7z"></path>
-                        </svg>
-                        <span>{{ errorForObjectAndKey(object, column).message }}</span>
-                    </div>
-                    <input v-if="!inputTypeForKey(column)" :value="valueForKey(object, column)" @change="setValueForKey(object, column, $event.target.value)" readonly>
-                    <input v-if="inputTypeForKey(column) === 'text'" :value="valueForKey(object, column)" @change="setValueForKey(object, column, $event.target.value)">
-
-                    <div v-if="inputTypeForKey(column) === 'color'" class='input-color'>
-                        <input v-if="inputTypeForKey(column) === 'color'" :object-id="object.id" :value="valueForKey(object, column)" @change="setValueForKey(object, column, $event.target.value)">
-                    </div>
-
-                    <div v-if="inputTypeForKey(column) === 'select'" class='input-select'>
-                        <select @change="setValueForKey(object, column, $event.target.value)" >
-                            <option :selected="!valueForKey(object, column)" value="null">None</option>
-                            <option v-for='(id, name) in selectOptionsForObjectAndKey(object, column)' :value="id" :selected="valueForKey(object, column)===name">{{ name }}</option>
-                        </select>
-                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 14' height='10px'>
-                            <path d='M.5 0v14l11-7-11-7z' transform='translate(13) rotate(90)'></path>
-                        </svg>
-                    </div>
-                </td>
-                <td class="destroy">
-                    <svg @click="destroyObject(object)" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M137.05 128l75.476-75.475c2.5-2.5 2.5-6.55 0-9.05s-6.55-2.5-9.05 0L128 118.948 52.525 43.474c-2.5-2.5-6.55-2.5-9.05 0s-2.5 6.55 0 9.05L118.948 128l-75.476 75.475c-2.5 2.5-2.5 6.55 0 9.05 1.25 1.25 2.888 1.876 4.525 1.876s3.274-.624 4.524-1.874L128 137.05l75.475 75.476c1.25 1.25 2.888 1.875 4.525 1.875s3.275-.624 4.525-1.874c2.5-2.5 2.5-6.55 0-9.05L137.05 128z"/>
-                    </svg>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-</section>
+  <EditableSelectList
+    :selectedObjectType="mode"
+    :objectTypes="objectTypesDisplay"
+    :rows="rows"
+    :columns="columns"
+    :selectedRowId="selectedObject && selectedObject.id"
+    :selectRow="row => { selectedObject = row; }"
+    :addRow="addRowPermitted && createObject"
+    :editRow="modifyObject"
+    :destroyRow="destroyObject"
+    :duplicateRow="duplicateRow"
+    :searchAvailable="searchAvailable"
+    :compact="compact"
+    @toggleCompact="c => $emit('toggleCompact', c)"
+    @selectObjectType="changeMode"
+  />
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import helpers from './../store/modules/models/helpers';
+import { mapState, mapGetters } from 'vuex';
+import libconfig from '../store/modules/models/libconfig';
+import EditableSelectList from './EditableSelectList.vue';
+import helpers from '../store/modules/models/helpers';
+import { replaceIdsForCloning } from './../store/modules/geometry/helpers';
+import { assignableProperties, componentTypes } from '../store/modules/application/appconfig';
+import modelHelpers from '../store/modules/models/helpers';
 
-const Huebee = require('huebee');
+
+function keyForMode(mode) {
+  return (
+    mode === 'stories' ? 'currentStory' :
+    _.includes(componentTypes, mode) ? 'currentComponentDef' :
+    _.includes(assignableProperties, mode) ? 'currentSpaceProperty' :
+    _.includes(['windows', 'daylighting_controls'], mode) ? 'currentComponentInstance' :
+    'currentSubSelection');
+}
+
 
 export default {
-  name: 'library',
-  data() {
-    return {
-      search: '',
-      sortKey: 'id',
-      sortDescending: true,
-      type: null, // object type being viewed
-      validationErrors: [],
-      huebs: {},
-    };
-  },
+  name: 'Library',
+  props: ['objectTypes', 'mode', 'searchAvailable', 'compact', 'addNewOnHotkey'],
   mounted() {
-    // initialize the library to view objects of the same type being viewed in the navigation
-    this.type = this.mode;
-    this.configurePickers();
+    document.body.addEventListener('keyup', this.hotkeyAddNew);
+  },
+  beforeDestroy() {
+    document.body.removeEventListener('keyup', this.hotkeyAddNew);
   },
   computed: {
-    ...mapState({
-      mode: state => state.application.currentSelections.mode,
-      stories: state => state.models.stories,
+    ...mapGetters({
+      currentStoryGeom: 'application/currentStoryGeometry',
     }),
-    // current selection getters and setters - these dispatch actions to update the data store when a new item is selected
+    objectTypesDisplay() {
+      return this.objectTypes.map(ot => ({
+        val: ot,
+        display: libconfig[ot].displayName,
+      }));
+    },
+    columns() {
+      if (!libconfig[this.mode]) return [];
+      return libconfig[this.mode].columns
+    },
     currentStory: {
-      get() { return this.$store.state.application.currentSelections.story; },
-      set(item) { this.$store.dispatch('application/setCurrentStory', { story: item }); },
+      get() { return this.$store.getters['application/currentStory']; },
+      set(story) { this.$store.dispatch('application/setCurrentStoryId', { id: story.id }); },
     },
-    currentSpace: {
-      get() { return this.$store.state.application.currentSelections.space; },
-      set(item) { this.$store.dispatch('application/setCurrentSpace', { space: item }); },
+    // current selection getters and setters - these dispatch actions to update the data store when a new item is selected
+    currentSubSelection: {
+      get() { return this.$store.getters['application/currentSubSelection']; },
+      set(item) { this.$store.dispatch('application/setCurrentSubSelectionId', { id: item.id }); },
     },
-    currentShading: {
-      get() { return this.$store.state.application.currentSelections.shading; },
-      set(item) { this.$store.dispatch('application/setCurrentShading', { shading: item }); },
+    currentSpaceProperty: {
+      get() { return this.$store.getters['application/currentSpaceProperty']; },
+      set(item) { this.$store.dispatch('application/setCurrentSpacePropertyId', { id: item.id }); },
     },
-    currentImage: {
-      get() { return this.$store.state.application.currentSelections.image; },
-      set(item) { this.$store.dispatch('application/setCurrentImage', { image: item }); },
+    currentComponentDef: {
+      get() { return this.$store.getters['application/currentComponentDefinition']; },
+      set(item) { this.$store.dispatch('application/setCurrentComponentDefinitionId', { id: item.id }); },
     },
-    currentThermalZone: {
-      get() { return this.$store.state.application.currentSelections.thermal_zone; },
-      set(item) { this.$store.dispatch('application/setCurrentThermalZone', { thermal_zone: item }); },
-    },
-    currentBuildingUnit: {
-      get() { return this.$store.state.application.currentSelections.building_unit; },
-      set(item) { this.$store.dispatch('application/setCurrentBuildingUnit', { building_unit: item }); },
-    },
-    currentSpaceType: {
-      get() { return this.$store.state.application.currentSelections.space_type; },
-      set(item) { this.$store.dispatch('application/setCurrentSpaceType', { space_type: item }); },
+    currentComponentInstance: {
+      get() { return this.$store.getters['application/currentComponentInstance']; },
+      set(ci) { this.$store.dispatch('application/setCurrentComponentInstanceId', { id: ci.id }); },
     },
     /*
     * returns the currently selected object in the library
@@ -144,413 +94,228 @@ export default {
     */
     selectedObject: {
       get() {
-        if (this.type === 'story') {
-          return this.currentStory;
-        }
-        return this.currentImage ||
-          this.currentSpace ||
-          this.currentShading ||
-          this.currentBuildingUnit ||
-          this.currentThermalZone ||
-          this.currentSpaceType;
+        return this[this.keyForCurrentMode];
       },
       set(item) {
-        switch (this.type) {
-          case 'stories':
-            this.currentStory = item;
-            break;
-          case 'building_units':
-            this.currentBuildingUnit = item;
-            break;
-          case 'thermal_zones':
-            this.currentThermalZone = item;
-            break;
-          case 'space_types':
-            this.currentSpaceType = item;
-            break;
-          case 'spaces':
-            this.currentStory = this.stories.find(s => s.spaces.find(sp => sp.id === item.id));
-            this.currentSpace = item;
-            break;
-          case 'shading':
-            this.currentStory = this.stories.find(s => s.spaces.find(sp => sp.id === item.id));
-            this.currentShading = item;
-            break;
-          case 'images':
-            this.currentStory = this.stories.find(s => s.images.find(img => img.id === img.id));
-            this.currentImage = item;
-            break;
-          default:
-            break;
-        }
+        this[this.keyForCurrentMode] = item;
       },
     },
-
-  /*
-  * state.models.library extended to include stories, spaces, shading and images
-  * objects are deep copies to avoid mutating the store
-  */
-    extendedLibrary() {
-      let spaces = [];
-      let shading = [];
-      let images = [];
-
-      for (let i = 0; i < this.$store.state.models.stories.length; i++) {
-        spaces = spaces.concat(this.$store.state.models.stories[i].spaces);
-        shading = shading.concat(this.$store.state.models.stories[i].shading);
-        images = images.concat(this.$store.state.models.stories[i].images);
-      }
-
-      return JSON.parse(JSON.stringify({
-        ...this.$store.state.models.library,
-        stories: this.$store.state.models.stories,
-        spaces,
-        shading,
-        images,
-      }));
+    keyForCurrentMode() {
+      return keyForMode(this.mode);
     },
-
-    /*
-    * return all objects in the extended library for a given type to be displayed at one time
-    * filters by the search term
-    * objects are deep copies to avoid mutating the store
-    */
-    displayObjects() {
-      return (this.extendedLibrary[this.type] || [])
-        .filter(object =>
-          // check if the value for any key on the object contains the search term
-          Object.keys(object).some((key) => {
-            // coerce key values to strings, use lowercase version of search term and key value
-            const value = String(this.valueForKey(object, key)).toLowerCase();
-            return value.includes(this.search.toLowerCase());
-          }))
-        .sort((a, b) => {
-          if (a[this.sortKey] === b[this.sortKey]) { return 0; }
-          if (this.sortDescending) {
-            return a[this.sortKey] > b[this.sortKey] ? -1 : 1;
-          }
-          return a[this.sortKey] < b[this.sortKey] ? -1 : 1;
-        });
+    ...mapState({
+      stories: state => state.models.stories,
+      modeTab: state => state.application.currentSelections.modeTab,
+    }),
+    spaces() { return this.currentStory.spaces; },
+    shading() { return this.currentStory.shading; },
+    images() { return this.currentStory.images; },
+    windows() { return this.currentStory.windows; },
+    daylighting_controls() {
+      return _.flatMap(this.currentStory.spaces, s => s.daylighting_controls);
     },
-
-    /*
-    * return all unique non private keys for the set of displayObjects
-    */
-    columns() {
-      const columns = [];
-      this.displayObjects.forEach((o) => {
-        Object.keys(o).forEach((k) => {
-          if ((columns.indexOf(k) === -1) && !this.keyIsPrivate(this.type, k)) { columns.push(k); }
-        });
-      });
-      // look up additional keys (computed properties)
-      const additionalKeys = helpers.defaultKeysForType(this.type);
-      additionalKeys.forEach((k) => {
-        if ((columns.indexOf(k) === -1) && !this.keyIsPrivate(this.type, k)) { columns.push(k); }
-      });
-      return columns;
+    rows() {
+      return _.includes(
+          ['stories', 'spaces', 'shading', 'images', 'windows', 'daylighting_controls'],
+          this.mode,
+      ) ? this[this.mode] : this.$store.state.models.library[this.mode];
+    },
+    componentInstanceMode() {
+      return _.includes(['windows', 'daylighting_controls'], this.mode);
+    },
+    addRowPermitted() {
+      return this.mode !== 'stories' || this.modeTab === 'floorplan';
+    },
+    renderByMode: {
+      get() { return this.$store.state.application.currentSelections.mode; },
+      set(mode) { this.$store.dispatch('application/setCurrentMode', { mode }); },
     },
   },
+  watch: {
+    rows() {
+      if (!(this.selectedObject && _.includes(_.map(this.rows, 'id'), this.selectedObject.id)) && this.rows.length > 0) {
+        this.selectedObject = this.rows[0];
+      }
+    },
+    mode(currMode, oldMode) {
+      if (keyForMode(currMode) === 'currentSpaceProperty') {
+        this.renderByMode = this.mode;
+      } else if (keyForMode(oldMode) === 'currentSpaceProperty') {
+        this.renderByMode = 'spaces';
+      }
+    }
+  },
   methods: {
-    // initialize an empty story, space, shading, building_unit, or thermal_zone depending on the selected mode
-    createItem() {
-      switch (this.type) {
+    hotkeyAddNew(evt) {
+      if (this.addNewOnHotkey && this.addRowPermitted && evt.ctrlKey && evt.key === 'a') {
+        this.createObject();
+      }
+    },
+    changeMode(newMode) {
+      if (!_.includes(this.objectTypes, newMode)) {
+        throw new Error(`Unable to find ${newMode} in options ${JSON.stringify(this.objectTypes)}`);
+      }
+      this.$emit('changeMode', newMode);
+    },
+    modifyObject(rowId, colName, value) {
+      if (this.componentInstanceMode) {
+        return this.modifyComponentInstance(rowId, colName, value);
+      }
+      const row = _.find(this.rows, { id: rowId });
+      const result = helpers.setValueForKey(row, this.$store, this.mode, colName, value);
+      if (!result.success) {
+        window.eventBus.$emit('error', result.error);
+      }
+    },
+    modifyComponentInstance(id, key, value) {
+      if (this.mode === 'windows') {
+        this.$store.dispatch('models/modifyWindow', { id, key, value, story_id: this.currentStory.id });
+      } else if (this.mode === 'daylighting_controls') {
+        this.$store.dispatch('models/modifyDaylightingControl', { id, key, value, story_id: this.currentStory.id });
+      } else {
+        throw new Error(`unrecognized component mode "${this.mode}"`);
+      }
+    },
+    /*
+    * CREATE OBJECT
+    * initializes an empty object
+    */
+    createObject({ duplicate = false } = {}) {
+      if (duplicate) {
+        const height = this.currentStory.floor_to_ceiling_height;
+        this.$store.dispatch('models/initStory');
+        this.$store.dispatch('models/updateStoryWithData', { story: this.currentStory, floor_to_ceiling_height: height });
+        this.$store.dispatch('application/setCurrentTool', { tool: 'Rectangle' });
+      } else {
+        switch (this.mode) {
+          case 'stories':
+            this.$store.dispatch('models/initStory');
+            return;
+          case 'spaces':
+            this.$store.dispatch('models/initSpace', { story: this.currentStory });
+            break;
+          case 'shading':
+            this.$store.dispatch('models/initShading', { story: this.currentStory });
+            break;
+          case 'images':
+            window.eventBus.$emit('uploadImage');
+            break;
+          case 'windows':
+          case 'daylighting_controls':
+            window.eventBus.$emit('error', 'Create components by clicking where you would like it to be');
+            break;
+          default:
+            this.$store.dispatch('models/createObjectWithType', { type: this.mode });
+            break;
+        }
+      }
+      this.selectLatest();
+    },
+    async duplicateRow(row) {
+      if(this.stories.find((story) => story.id === this.selectedObject.id)) {
+        this.cloneStory(this.selectedObject);
+      } else {
+        this.createObject();
+        await this.$nextTick();
+        let newName = row.name;
+        // increment Copy # until no name conflict.
+        while (_.find(this.rows, { name: newName })) {
+          let copyNum = newName.match(/\((\d+)\)/);
+          newName = copyNum ? `${newName.slice(0, copyNum.index)}(${+copyNum[1] + 1})` : `${newName} (2)`;
+        }
+        this.modifyObject(this.selectedObject.id, 'name', newName);
+        this.columns.forEach(({ name: key, readonly, private: privateKey }) => {
+          if (key === 'id' || key === 'name' || key === 'color') return;
+          if (readonly || privateKey) return;
+          if (this.selectedObject[key] === row[key]) return;
+          this.modifyObject(this.selectedObject.id, key, row[key]);
+        });
+      }
+    },
+    selectLatest() {
+      const newestRow = _.maxBy(this.rows, r => +r.id);
+      if (!newestRow) { return; }
+      this.selectedObject = newestRow;
+    },
+    /**
+     * Clones a given story
+     * Given a story this method deep clones the story, creates new ids for the properties
+     * and replaces the cloned story with those ids. Cleans up any artifacts. 
+     *
+     * @param {'Story'} story 
+     */
+    cloneStory(story) {
+      this.$store.dispatch('application/setCurrentStoryId', { id: story.id });
+      const { clonedGeometry, idMap } = replaceIdsForCloning(this.currentStoryGeom);
+      this.createObject({ duplicate: true });
+      const { clonedStory } = modelHelpers.replaceIdsUpdateInfoForCloning(story, idMap, this.state, this.currentStory);
+      this.destroyDuplicateSpaces();
+      this.$store.dispatch('models/cloneStory', clonedStory);
+      this.$store.dispatch('geometry/cloneStoryGeometry', clonedGeometry);
+      for (let i = this.currentStory.shading.length - 1; i >= 0; i--) {
+        this.$store.dispatch('models/destroyShading', {
+          shading: this.currentStory.shading[i],
+          story: this.currentStory,
+        });
+      }
+    },
+    destroyDuplicateSpaces() {
+      this.$store.dispatch('models/destroySpace', {
+        space: this.currentStory.spaces[0],
+        story: this.currentStory,
+      });
+    },
+
+    /*
+    * DESTROY OBJECT
+    */
+    destroyObject(object) {
+      switch (this.mode) {
         case 'stories':
-          this.$store.dispatch('models/initStory');
+          this.$store.dispatch('models/destroyStory', { story: object });
           return;
         case 'spaces':
-          this.$store.dispatch('models/initSpace', {
-            story: this.$store.state.application.currentSelections.story,
+          this.$store.dispatch('models/destroySpace', {
+            space: object,
+            story: this.$store.state.models.stories.find(story => story[this.mode].find(o => o.id === object.id)),
           });
           break;
         case 'shading':
-          this.$store.dispatch('models/initShading', {
-            story: this.$store.state.application.currentSelections.story,
+          this.$store.dispatch('models/destroyShading', {
+            shading: object,
+            story: this.$store.state.models.stories.find(story => story[this.mode].find(o => o.id === object.id)),
           });
           break;
-        case 'building_units':
-        case 'thermal_zones':
-        case 'space_types':
-        case 'construction_sets':
-        case 'windows':
-        case 'daylighting_controls':
-          this.$store.dispatch('models/createObjectWithType', {
-            type: this.type,
+        case 'images':
+          this.$store.dispatch('models/destroyImage', {
+            image: object,
+            story: this.$store.state.models.stories.find(story => story[this.mode].find(o => o.id === object.id)),
           });
+          break;
+        case 'window_definitions':
+          this.$store.dispatch('models/destroyWindowDef', { object });
+          break;
+        case 'daylighting_control_definitions':
+          this.$store.dispatch('models/destroyDaylightingControlDef', { object });
+          break;
+        case 'door_definitions':
+          this.$store.dispatch('models/destroyDoorDef', { object });
+          break;
+        case 'windows':
+          this.$store.dispatch('models/destroyWindow', { story_id: this.currentStory.id, object });
+          break;
+        case 'daylighting_controls':
+          this.$store.dispatch('models/destroyDaylightingControl', { story_id: this.currentStory.id, object });
           break;
         default:
+          this.$store.dispatch('models/destroyObject', { object });
           break;
       }
-      this.selectedObject = this.displayObjects[this.displayObjects.length - 1];
     },
 
-    /*
-    * returns the formatted displayName for types defined in the library config
-    */
-    displayTypeForType(type) { return helpers.map[type].displayName; },
-
-    /*
-    * returns the formatted displayName for keys defined in the library config
-    * only returns null for private keys - use to check if a key is private
-    * custom user defined keys which do not exist in the config keymap will be returned unchanged
-    */
-    displayNameForKey(key) { return helpers.displayNameForKey(this.type, key); },
-
-    /*
-    * returns the readonly/private properties for keys defined in the library config
-    * returns false for custom user defined keys
-    */
-    keyIsReadonly(object, key) { return helpers.keyIsReadonly(this.type, key); },
-    keyIsPrivate(object, key) { return helpers.keyIsPrivate(this.type, key); },
-
-    /*
-    * returns the result of the getter defined for the key if one exists, otherwise
-    * returns the raw string value at obj[key] for custom user defined keys
-    */
-    valueForKey (object, key) {
-        return this.errorForObjectAndKey(object, key) ? this.errorForObjectAndKey(object, key).value : helpers.valueForKey(object, this.$store.state, this.type, key);
-    },
-
-        /*
-        * dispatch an update action for the supplied object
-        * store errors if validation fails
-        */
-        setValueForKey (object, key, value) {
-            // must update the object so that the input field value does not reset
-            const result = helpers.setValueForKey(object, this.$store, this.type, key, value);
-            // remove existing errors for object
-            this.validationErrors = this.validationErrors.filter(e => e.object_id !== object.id);
-
-            if (!result.success) {
-                this.validationErrors.push({
-                    object_id: object.id,
-                    key: key,
-                    value: value,
-                    message: result.error,
-                    visible: false
-                });
-            }
-        },
-        errorForObjectAndKey (object, key) {
-            if (key) {
-                return this.validationErrors.find(e => e.object_id === object.id && e.key === key);
-            } else {
-                return this.validationErrors.find(e => e.object_id === object.id);
-            }
-        },
-        toggleError(object, key, show) {
-            const error = this.errorForObjectAndKey(object, key);
-            if (error) {
-                error.visible = show;
-            }
-        },
-        /*
-        * destroy a library object
-        * dispatches destroyStory, destroySpace, destroyShading, or destroyObject depending on the object's type
-        */
-        destroyObject (object) {
-            if (this.type === 'stories') {
-                this.$store.dispatch('models/destroyStory', {
-                    story: object
-                });
-            } else if (this.type === 'spaces') {
-                // look up the story referencing the space to be destroyed
-                const storyForSpace = this.$store.state.models.stories.find((story) => {
-                    return story.spaces.find(s => s.id === object.id);
-                });
-                this.$store.dispatch('models/destroySpace', {
-                    space: object,
-                    story: storyForSpace
-                });
-            }  else if (this.type === 'images') {
-                // look up the story referencing the space to be destroyed
-                const storyForImage = this.$store.state.models.stories.find((story) => {
-                    return story.images.find(i => i.id === object.id);
-                });
-                this.$store.dispatch('models/destroyImage', {
-                    image: object,
-                    story: storyForImage
-                });
-            } else if (this.type === 'shading') {
-                // look up the story referencing the shading to be destroyed
-                const storyForShading = this.$store.state.models.stories.find((story) => {
-                    return story.shading.find(s => s.id === object.id);
-                });
-                this.$store.dispatch('models/destroyShading', {
-                    shading: object,
-                    story: storyForShading
-                });
-            } else {
-                this.$store.dispatch('models/destroyObject', {
-                    object: object
-                });
-            }
-        },
-        // classForObjectRow (object) {
-        //     var classList = "";
-        //     if (this.errorForObjectAndKey(object, null)) {
-        //         classList += " error"
-        //     }
-        //     if (this.selectedObject && this.selectedObject.id === object.id) {
-        //         classList += " current"
-        //     }
-        //     return classList;
-        // },
-
-    sortBy(key) {
-        this.sortDescending = this.sortKey === key ? !this.sortDescending : true;
-        this.sortKey = key;
-    },
-
-        inputTypeForKey (key) {
-            return helpers.inputTypeForKey(this.type, key);
-        },
-
-        selectOptionsForObjectAndKey (object, key) {
-            return helpers.selectOptionsForKey(object, this.$store.state, this.type, key);
-        },
-        configurePickers () {
-            const inputs = document.querySelectorAll('.input-color > input');
-            for (let i = 0; i < inputs.length; i++) {
-                const object_id = inputs[i].getAttribute("object-id");
-
-                this.huebs[object_id] = new Huebee(inputs[i], { saturations: 1 });
-                this.huebs[object_id].handler = (color, h, s, l) => {
-                    const object = helpers.libraryObjectWithId(this.$store.state.models, object_id);
-                    this.setValueForKey(object, 'color', color);
-                }
-                this.huebs[object_id].on('change', this.huebs[object_id].handler);
-            }
-        }
   },
-  watch: {
-    displayObjects() { this.$nextTick(this.configurePickers); },
-    type() {
-      this.search = '';
-      this.sortKey = 'id';
-      this.sortDescending = true;
-    },
+  components: {
+    EditableSelectList,
   },
 };
 </script>
-
-<style lang='scss' scoped>
-@import './../scss/config';
-@import './../../node_modules/huebee/dist/huebee.min.css';
-
-#library {
-    background-color: $gray-darkest;
-    overflow: auto;
-
-    header {
-        display: flex;
-        padding: 1rem 1.5rem;
-
-        .input-select {
-            margin-right: 3rem;
-            width: 10rem;
-        }
-        .input-text {
-            margin-right: auto;
-            width: 10rem;
-        }
-    }
-
-    table {
-        border-spacing: 0;
-        width: 100%;
-
-        thead tr th, tbody tr td {
-            text-align: left;
-            padding: 0 1rem;
-            position: relative;
-
-            &:first-child {
-                padding-left: 2.5rem;
-            }
-            &:last-child {
-                flex-grow: 2;
-            }
-        }
-
-
-        thead {
-            th {
-                border-bottom: 2px solid $gray-medium-light;
-            }
-            tr {
-                height: 3rem;
-                svg {
-                    height: 1rem;
-                    width: 1rem;
-                    fill: $gray-medium-light;
-                }
-            }
-        }
-
-        tbody tr {
-            height: 2rem;
-
-            &:nth-of-type(odd) {
-                background-color: $gray-medium-dark;
-            }
-
-            &.current {
-                background: red;//$gray-medium-light;
-            }
-
-            .input-select {
-                margin: .5rem 0;
-            }
-
-            input {
-                background-color: rgba(0,0,0,0);
-                border: none;
-                color: $gray-lightest;
-                font-size: 1rem;
-            }
-
-            // last column - destroy item
-            td.destroy {
-                width: 2rem;
-                svg {
-                    cursor: pointer;
-                    height: 1.25rem;
-                    fill: $gray-lightest;
-                    &:hover {
-                        fill: $secondary;
-                    }
-                }
-            }
-
-            // error styles
-            &.error {
-                background: rgba($secondary, .5);
-                position: relative;
-            }
-
-            .tooltip-error {
-                bottom: 3rem;
-                background-color: $gray-darkest;
-                border: 1px solid $secondary;
-                color: $gray-lightest;
-                left: 3rem;
-                border-radius: .25rem;
-                padding: .5rem 1rem;
-                position: absolute;
-                svg {
-                    bottom: -0.7rem;
-                    height: .75rem;
-                    left: 0.5rem;
-                    position: absolute;
-                    transform: rotate(90deg);
-                    path {
-                        fill: $secondary;
-                    }
-                }
-            }
-        }
-    }
-}
-
-</style>

@@ -1,18 +1,33 @@
 export default {
-    // current selections
-    setCurrentStory (state, payload) { state.currentSelections.story = payload.story; },
-    setCurrentSpace (state, payload) { state.currentSelections.space = payload.space; },
-    setCurrentShading (state, payload) { state.currentSelections.shading = payload.shading; },
-    setCurrentImage (state, payload) { state.currentSelections.image = payload.image; },
-    setCurrentBuildingUnit (state, payload) { state.currentSelections.building_unit = payload.building_unit; },
-    setCurrentThermalZone (state, payload) { state.currentSelections.thermal_zone = payload.thermal_zone; },
-    setCurrentSpaceType (state, payload) { state.currentSelections.space_type = payload.space_type; },
+  // current selections
+  setCurrentStoryId(state, payload) { state.currentSelections.story_id = payload.id; },
+  setCurrentSubSelectionId(state, payload) {
+    const storyId = state.currentSelections.story_id;
+    if (!storyId) {
+      console.error('expected a story to be selected, in order to set a subselection');
+      return;
+    }
+    state.currentSelections.subselection_ids = {
+      ...state.currentSelections.subselection_ids,
+      [storyId]: payload.id,
+    };
+  },
 
-    // editor rendering/drawing tool
-    setApplicationTool (state, payload) { state.currentSelections.tool = payload.tool; },
-    setApplicationMode (state, payload) { state.currentSelections.mode = payload.mode; },
-    
-    // d3 scaling functions
-    setScaleX (state, payload) { state.scale.x = payload.scaleX; },
-    setScaleY (state, payload) { state.scale.y = payload.scaleY; }
-}
+  setCurrentComponentId(state, payload) { state.currentSelections.component_id = payload.id; },
+  setCurrentComponentDefinitionId(state, payload) { state.currentSelections.component_definition_id = payload.id; },
+  setCurrentComponentInstanceId(state, payload) { state.currentSelections.component_instance_id = payload.id; },
+
+  setCurrentSpacePropertyId(state, payload) { state.currentSelections.space_property_id = payload.id; },
+
+  setCurrentSnapMode(state, payload) { state.currentSelections.snapMode = payload.snapMode; },
+  setCurrentModeTab(state, payload) { state.currentSelections.modeTab = payload.modeTab; },
+  setCurrentSubselectionType(state, payload) { state.currentSelections.subselectionType = payload.subselectionType; },
+
+  // editor rendering/drawing tool
+  setCurrentTool(state, payload) { state.currentSelections.tool = payload.tool; },
+  setCurrentMode(state, payload) { state.currentSelections.mode = payload.mode; },
+
+  // d3 scaling functions
+  setScaleX(state, payload) { state.scale.x = payload.scaleX; },
+  setScaleY(state, payload) { state.scale.y = payload.scaleY; },
+};
