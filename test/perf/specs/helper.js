@@ -41,7 +41,7 @@ export async function loadFloorPlan(data, type = 'floorplan') {
   const eventObj = {
     target: {
       files: [
-        blob
+        blob,
       ],
     },
   };
