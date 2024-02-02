@@ -524,7 +524,7 @@ export default {
     .append('text')
     .attr('x', d => this.rwuToGrid(d[0].x, 'x') + (this.rwuToGrid(d[1].x, 'x') - this.rwuToGrid(d[0].x, 'x')) / 2)
     .attr('y', d => this.rwuToGrid(d[0].y, 'y') + (this.rwuToGrid(d[1].y, 'y') - this.rwuToGrid(d[0].y, 'y')) / 2)
-    .attr('dx', -1.25 * (this.transform.k > 1 ? 1 : this.transform.k) + 'em')
+    .attr('dx', `${-1.25 * (this.transform.k > 1 ? 1 : this.transform.k)}em`)
     .attr('data-transform-plz', '')
     .text((d) => {
       const dist = this.distanceBetweenPoints(d[0], d[1]);

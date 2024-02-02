@@ -1,0 +1,802 @@
+{
+  "building_units": [
+
+  ],
+  "construction_sets": [
+    {
+      "handle": "{536062d5-ec0f-4ba9-8ae8-67df13be6768}",
+      "id": "",
+      "name": "Dark Roof/Light Wall Exterior - Default Interior"
+    },
+    {
+      "handle": "{33fa4957-7960-4cba-9806-b3fae18b7ec3}",
+      "id": "",
+      "name": "Light Roof/Dark Wall Exterior - Default Interior"
+    }
+  ],
+  "daylighting_control_definitions": [
+
+  ],
+  "door_definitions": [
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "High Traffic Manual Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Garage Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Dock Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Automatic Sliding Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Low Traffic Manual Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Revolving Door",
+      "width": 3
+    },
+    {
+      "door_type": "Door",
+      "height": 6.67,
+      "id": "",
+      "name": "Trane Door",
+      "width": 3
+    }
+  ],
+  "pitched_roofs": [
+
+  ],
+  "space_types": [
+    {
+      "color": null,
+      "handle": "{a965cade-1103-4200-92ae-73f682b5f40c}",
+      "id": "",
+      "name": "workshop"
+    },
+    {
+      "color": null,
+      "handle": "{cf348d67-8479-4039-a012-ca1a8d26ff56}",
+      "id": "",
+      "name": "workout_room"
+    },
+    {
+      "color": null,
+      "handle": "{e2b4090e-07dd-4fbc-9259-51f273115669}",
+      "id": "",
+      "name": "vestibule"
+    },
+    {
+      "color": null,
+      "handle": "{320f76a2-3a5c-4d50-9876-55081125013c}",
+      "id": "",
+      "name": "vacant"
+    },
+    {
+      "color": null,
+      "handle": "{384a1bb6-3529-40d5-9340-205462301524}",
+      "id": "",
+      "name": "retail_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{d7bae912-b150-462e-b023-6f34b6e0d15c}",
+      "id": "",
+      "name": "stairwell"
+    },
+    {
+      "color": null,
+      "handle": "{8aa1899e-1e1c-4872-9bcf-f6be94f06926}",
+      "id": "",
+      "name": "residential_small"
+    },
+    {
+      "color": null,
+      "handle": "{e316e3ab-3114-4725-b155-b515b3221ea1}",
+      "id": "",
+      "name": "parking_garage"
+    },
+    {
+      "color": null,
+      "handle": "{05249d45-fe31-4355-99df-ce66ccd83a11}",
+      "id": "",
+      "name": "office"
+    },
+    {
+      "color": null,
+      "handle": "{cf97d926-b1df-4af6-9493-6e9d4f53e795}",
+      "id": "",
+      "name": "medical_office"
+    },
+    {
+      "color": null,
+      "handle": "{b64eee6e-e609-4791-8472-0dac92f7c7bc}",
+      "id": "",
+      "name": "mechanical_room"
+    },
+    {
+      "color": null,
+      "handle": "{2690fce5-f241-4a03-b129-f3555ca7c331}",
+      "id": "",
+      "name": "loading_docks"
+    },
+    {
+      "color": null,
+      "handle": "{333662be-19ad-4791-bd0a-37b0b53c9fe9}",
+      "id": "",
+      "name": "material_handling"
+    },
+    {
+      "color": null,
+      "handle": "{bc565b03-5076-486d-aaa2-e4f74033d1db}",
+      "id": "",
+      "name": "convention_front_of_house_conv_rooms"
+    },
+    {
+      "color": null,
+      "handle": "{90f7ae7b-88f2-4f38-8637-f08cb65ad72a}",
+      "id": "",
+      "name": "apartments_f"
+    },
+    {
+      "color": null,
+      "handle": "{99db7b65-a04d-4e33-9128-1af619687274}",
+      "id": "",
+      "name": "apartments_e"
+    },
+    {
+      "color": null,
+      "handle": "{bed752bb-646b-4a45-ab2c-13978c664bd3}",
+      "id": "",
+      "name": "apartments_a"
+    },
+    {
+      "color": null,
+      "handle": "{b62721d1-c933-4206-8ef5-aea9d7662e30}",
+      "id": "",
+      "name": "apartments_d"
+    },
+    {
+      "color": null,
+      "handle": "{04b68a1e-fd5c-42f8-85fd-119093a4051d}",
+      "id": "",
+      "name": "jail"
+    },
+    {
+      "color": null,
+      "handle": "{578892c1-55bc-4b1e-9648-3f6f33f1262a}",
+      "id": "",
+      "name": "apartments_c"
+    },
+    {
+      "color": null,
+      "handle": "{ae6cea1d-939b-41f2-8138-1dd44f887a3e}",
+      "id": "",
+      "name": "auditorium_gym"
+    },
+    {
+      "color": null,
+      "handle": "{b0428c3e-f0cb-488c-b06e-79d9d637da23}",
+      "id": "",
+      "name": "lab"
+    },
+    {
+      "color": null,
+      "handle": "{d8968da5-a5a2-4c1e-b2ce-a0b030e7018a}",
+      "id": "",
+      "name": "convention_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{655e52e4-94b2-4bfb-98de-a4b5ae9db6eb}",
+      "id": "",
+      "name": "restaurant_front_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{80c8e7de-2ab5-45b6-8d6b-5b24a0e8cb4f}",
+      "id": "",
+      "name": "lobby"
+    },
+    {
+      "color": null,
+      "handle": "{7ef2c236-cde9-44ea-bce6-73db7443bc04}",
+      "id": "",
+      "name": "apartments_b"
+    },
+    {
+      "color": null,
+      "handle": "{0da97ed8-330d-4455-a2b9-7865dd0d0cfa}",
+      "id": "",
+      "name": "commercial_kitchen"
+    },
+    {
+      "color": null,
+      "handle": "{8c075307-5454-4540-854b-8efc79fdb89d}",
+      "id": "",
+      "name": "computer_lab"
+    },
+    {
+      "color": null,
+      "handle": "{aeb62ecf-03e7-4125-bffd-f795c13c24d9}",
+      "id": "",
+      "name": "hotel_staff_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{11588bd3-4b1a-4d28-89c1-fc5408711190}",
+      "id": "",
+      "name": "locker_rooms"
+    },
+    {
+      "color": null,
+      "handle": "{2af75240-6714-4651-8692-1c18405d3860}",
+      "id": "",
+      "name": "active_storage"
+    },
+    {
+      "color": null,
+      "handle": "{b21d739e-36d1-4c36-8c48-576d62addc14}",
+      "id": "",
+      "name": "convention_front_of_house_lobby"
+    },
+    {
+      "color": null,
+      "handle": "{65d6990a-cd74-45c6-bd63-15fe0665efe5}",
+      "id": "",
+      "name": "elevator"
+    },
+    {
+      "color": null,
+      "handle": "{fcde6c13-6ef0-45ff-9d0e-3010996b6c06}",
+      "id": "",
+      "name": "core_services"
+    },
+    {
+      "color": null,
+      "handle": "{3b19c857-1ce9-489f-9918-ad0ef6ddadc8}",
+      "id": "",
+      "name": "council_chamber"
+    },
+    {
+      "color": null,
+      "handle": "{84c71767-13b8-4800-8485-9192bb3a5f10}",
+      "id": "",
+      "name": "restaurant_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{e1ed5422-0626-4faa-b270-da7495b00b89}",
+      "id": "",
+      "name": "data_center"
+    },
+    {
+      "color": null,
+      "handle": "{27a06b5e-aa1b-46ad-96c4-b3c969080480}",
+      "id": "",
+      "name": "inactive_storage"
+    },
+    {
+      "color": null,
+      "handle": "{6f836404-6584-4ecf-997a-08e9c82401f4}",
+      "id": "",
+      "name": "hotel_breakfast"
+    },
+    {
+      "color": null,
+      "handle": "{caf82ff3-347f-41c6-94c9-1f8d4618eb0d}",
+      "id": "",
+      "name": "hotel_rooms"
+    },
+    {
+      "color": null,
+      "handle": "{7e0ecfdd-6e72-4731-bbad-fdb151de5215}",
+      "id": "",
+      "name": "indoor_swimming_pool"
+    },
+    {
+      "color": null,
+      "handle": "{45f9d7e5-1adf-4d0a-b335-bdc9d01574fc}",
+      "id": "",
+      "name": "retail_front_of_house"
+    },
+    {
+      "color": null,
+      "handle": "{4eefe343-03bc-4f9c-b4af-e5d8cee37dd7}",
+      "id": "",
+      "name": "classrooms"
+    },
+    {
+      "color": null,
+      "handle": "{99b0f002-43c1-466a-9dad-7cdd74957f26}",
+      "id": "",
+      "name": "full_service_gym"
+    },
+    {
+      "color": null,
+      "handle": "{c3d9c76d-cd22-4f46-b2f4-d39bd5d2e840}",
+      "id": "",
+      "name": "laundry_retail"
+    },
+    {
+      "color": null,
+      "handle": "{fdc744e3-3531-4150-afb2-2c1c6b1e1074}",
+      "id": "",
+      "name": "elevator_top"
+    },
+    {
+      "color": null,
+      "handle": "{326570a9-26aa-42ba-b1b4-46f922ee82e5}",
+      "id": "",
+      "name": "library_books"
+    }
+  ],
+  "stories": [
+
+  ],
+  "thermal_zones": [
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "active_storage"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_a"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_b"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_c"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_d"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_e"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "apartments_f"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "auditorium_gym"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "classrooms"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "commercial_kitchen"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "computer_lab"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "convention_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "convention_front_of_house_conv_rooms"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "convention_front_of_house_lobby"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "core_services"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "council_chamber"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "data_center"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "elevator"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "elevator_top"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "full_service_gym"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "hotel_breakfast"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "hotel_rooms"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "hotel_staff_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "inactive_storage"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "indoor_swimming_pool"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "jail"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "lab"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "laundry_retail"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "library_books"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "loading_docks"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "lobby"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "locker_rooms"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "material_handling"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "mechanical_room"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "medical_office"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "office"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "parking_garage"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "residential_small"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "restaurant_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "restaurant_front_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "retail_back_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "retail_front_of_house"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "stairwell"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "vacant"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "vestibule"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "workout_room"
+    },
+    {
+      "color": null,
+      "handle": null,
+      "id": "",
+      "name": "workshop"
+    }
+  ],
+  "version": "0.3.1",
+  "window_definitions": [
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Single Pane Window Low U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Double Pane Window Low U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Triple Pane Low Transmittance",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Single Pane Window Mid U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Double Pane Window Mid U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Triple Pane Mid Transmittance",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Single Pane Window High U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Double Pane Window High U",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Triple Pane High Transmittance",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Single Window",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Single Pane Window Mid U -- fixed, repeating",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Repeating Windows",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": null
+    },
+    {
+      "fin_projection_factor": null,
+      "height": null,
+      "id": "",
+      "name": "Single Pane Window Mid U -- fixed, wwr 0.4",
+      "overhang_projection_factor": null,
+      "sill_height": null,
+      "texture": null,
+      "width": null,
+      "window_definition_mode": "Window to Wall Ratio",
+      "window_spacing": null,
+      "window_type": "Fixed",
+      "wwr": 0.4
+    }
+  ]
+}
